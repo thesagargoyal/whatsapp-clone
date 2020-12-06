@@ -12,18 +12,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int z = 0;
+  bool _isSearch = false;
+  int _currentPageIndex = 1;
+  PageController _pageViewController = new PageController(initialPage: 1);
+  List<Widget> _pages = [CameraPage(), ChatPage(), StatusPage(), CallPage()];
 
-  bool _isSearch=false;
-  int _currentPageIndex=1;
-  PageController _pageViewController=new PageController(initialPage: 1);
-  List<Widget> _pages=[CameraPage(),ChatPage(),StatusPage(),CallPage()];
-  _buildSearch(){
+  _buildSearch() {
     return Container(
       height: 50,
       margin: EdgeInsets.only(top: 40),
       decoration: BoxDecoration(
-        // color: Colors.white,
-        boxShadow: [
+          // color: Colors.white,
+          boxShadow: [
           // BoxShadow(
           //   color: Colors.black.withOpacity(.3),
           //   spreadRadius: 1,
@@ -50,37 +51,44 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: _currentPageIndex != 0 ? AppBar(
         elevation: 0.0,
         automaticallyImplyLeading: false,
-        backgroundColor: _isSearch==false?primaryColor:Colors.transparent,
-        title: _isSearch==false?Text("WhatsApp"):Container(height: 0.0,width: 0.0,),
-        flexibleSpace: _isSearch==false?Container(height: 0.0,width: 0.0,):_buildSearch(),
+        backgroundColor: _isSearch == false ? primaryColor : Colors.transparent,
+        title: _isSearch == false ? Text("WhatsApp") : Container(
+          height: 0.0, width: 0.0,),
+        flexibleSpace: _isSearch == false
+            ? Container(height: 0.0, width: 0.0,)
+            : _buildSearch(),
         actions: <Widget>[
           InkWell(
-              onTap: (){
+              onTap: () {
                 setState(() {
-                  _isSearch=true;
+                  _isSearch = true;
                 });
               },
               child: Icon(Icons.search)),
           SizedBox(width: 5,),
           Icon(Icons.more_vert),
         ],
-      ),
+      ) : null,
       body: Column(
         children: <Widget>[
-          CustomTabBar(index:_currentPageIndex),
+          _isSearch == false
+              ? _currentPageIndex != 0
+              ? CustomTabBar(index: _currentPageIndex)
+              : Container(height: 0, width: 0,)
+              : Container(height: 0, width: 0,),
           Expanded(
               child: PageView.builder(
-                  itemCount:_pages.length,
+                  itemCount: _pages.length,
                   controller: _pageViewController,
-                  onPageChanged: (index){
+                  onPageChanged: (index) {
                     setState(() {
-                      _currentPageIndex=index;
+                      _currentPageIndex = index;
                     });
                   },
-                  itemBuilder: (_,index){
+                  itemBuilder: (_, index) {
                     return _pages[index];
                   }
               )
